@@ -1006,6 +1006,9 @@ class VLAFlowMatching(SnapFlowModelMixin, nn.Module):
         num_lang_embs = lang_emb.shape[1]
         att_masks += [0] * num_lang_embs
 
+        if state is None:
+            msg = "state must be provided to embed_prefix."
+            raise ValueError(msg)
         state_emb = self.state_proj(state.to(dtype=self.state_proj.weight.dtype))
         emb_dim = 2
         state_emb = state_emb[:, None, :] if state_emb.ndim == emb_dim else state_emb
