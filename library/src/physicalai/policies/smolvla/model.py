@@ -895,7 +895,12 @@ class VLAFlowMatching(SnapFlowModelMixin, nn.Module):
 
     @staticmethod
     def _sample_time(bsize: int, device: torch.device) -> torch.Tensor:
-        beta_dist = torch.distributions.Beta(concentration1=1.5, concentration0=1.0)
+        # Concentrations are forced to float32: the Dirichlet sampler backing Beta has no bf16/fp16 kernel,
+        # and low-precision training sets the global default dtype.
+        beta_dist = torch.distributions.Beta(
+            concentration1=torch.tensor(1.5, dtype=torch.float32),
+            concentration0=torch.tensor(1.0, dtype=torch.float32),
+        )
         time_beta = beta_dist.sample((bsize,)).to(device=device, dtype=torch.float32)
         return time_beta * 0.999 + 0.001
 
