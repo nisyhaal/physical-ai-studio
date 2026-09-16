@@ -919,8 +919,7 @@ class VLAFlowMatching(SnapFlowModelMixin, nn.Module):
             img_masks: List of boolean masks for each image indicating valid regions.
             lang_tokens: Token IDs for language input to be embedded.
             lang_masks: Boolean mask for language tokens indicating valid tokens.
-            state: Optional state tensor to be projected and included in the prefix.
-                If None, state embedding is still computed.
+            state: State tensor to be projected and included in the prefix.
 
         Returns:
             A tuple containing:
@@ -931,6 +930,9 @@ class VLAFlowMatching(SnapFlowModelMixin, nn.Module):
                 - att_masks: Boolean tensor of shape (batch_size, seq_len) for attention
                     masking, where True indicates positions that should be masked
                     (state tokens are masked from image/language attention).
+
+        Raises:
+            ValueError: If ``state`` is None.
 
         Note:
             If the total sequence length is less than `self.prefix_length`, the outputs
